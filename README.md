@@ -77,6 +77,7 @@ The easiest would be create the corresponding folder at :
 `/scratch/mohanty/AWS_FRESH_RUN/snapshots_final/<experiment-name>` for the snapshots, and save the lmdb dataset at : `/home/mohanty/data/final_dataset/lmdb/<experiment-name>/`
 
 
+
 ###Workflow
 ####Training
 ```
@@ -92,7 +93,7 @@ cd <path_to_experiment_config_directory>
 #Generate results
 ./results/generate_results.sh
 
-#Now you should have the classification reports, confusion matrices, and evaluation graphs inside the results folde
+#Now you should have the classification reports, confusion matrices, and evaluation graphs inside the results folder
 
 ```
 
