@@ -1,0 +1,1070 @@
+I0403 13:09:50.453419 10406 caffe.cpp:237] Use GPU with device ID 0
+I0403 13:09:50.458462 10406 caffe.cpp:241] GPU device name: Tesla K40m
+I0403 13:09:50.720305 10406 net.cpp:313] The NetState phase (1) differed from the phase (0) specified by a rule in layer data
+I0403 13:09:50.720623 10406 net.cpp:49] Initializing net from parameters: 
+state {
+  phase: TEST
+}
+layer {
+  name: "data"
+  type: "Data"
+  top: "data"
+  top: "label"
+  include {
+    phase: TEST
+  }
+  transform_param {
+    crop_size: 227
+    mean_file: "/home/mohanty/data/final_dataset/lmdb/color-80-20/mean.binaryproto"
+  }
+  data_param {
+    source: "/home/mohanty/data/final_dataset/lmdb/color-80-20/test_db"
+    batch_size: 100
+    backend: LMDB
+  }
+}
+layer {
+  name: "conv1"
+  type: "Convolution"
+  bottom: "data"
+  top: "conv1"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 96
+    kernel_size: 11
+    stride: 4
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+layer {
+  name: "relu1"
+  type: "ReLU"
+  bottom: "conv1"
+  top: "conv1"
+}
+layer {
+  name: "norm1"
+  type: "LRN"
+  bottom: "conv1"
+  top: "norm1"
+  lrn_param {
+    local_size: 5
+    alpha: 0.0001
+    beta: 0.75
+  }
+}
+layer {
+  name: "pool1"
+  type: "Pooling"
+  bottom: "norm1"
+  top: "pool1"
+  pooling_param {
+    pool: MAX
+    kernel_size: 3
+    stride: 2
+  }
+}
+layer {
+  name: "conv2"
+  type: "Convolution"
+  bottom: "pool1"
+  top: "conv2"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 256
+    pad: 2
+    kernel_size: 5
+    group: 2
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
+      value: 0.1
+    }
+  }
+}
+layer {
+  name: "relu2"
+  type: "ReLU"
+  bottom: "conv2"
+  top: "conv2"
+}
+layer {
+  name: "norm2"
+  type: "LRN"
+  bottom: "conv2"
+  top: "norm2"
+  lrn_param {
+    local_size: 5
+    alpha: 0.0001
+    beta: 0.75
+  }
+}
+layer {
+  name: "pool2"
+  type: "Pooling"
+  bottom: "norm2"
+  top: "pool2"
+  pooling_param {
+    pool: MAX
+    kernel_size: 3
+    stride: 2
+  }
+}
+layer {
+  name: "conv3"
+  type: "Convolution"
+  bottom: "pool2"
+  top: "conv3"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 384
+    pad: 1
+    kernel_size: 3
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+layer {
+  name: "relu3"
+  type: "ReLU"
+  bottom: "conv3"
+  top: "conv3"
+}
+layer {
+  name: "conv4"
+  type: "Convolution"
+  bottom: "conv3"
+  top: "conv4"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 384
+    pad: 1
+    kernel_size: 3
+    group: 2
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
+      value: 0.1
+    }
+  }
+}
+layer {
+  name: "relu4"
+  type: "ReLU"
+  bottom: "conv4"
+  top: "conv4"
+}
+layer {
+  name: "conv5"
+  type: "Convolution"
+  bottom: "conv4"
+  top: "conv5"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 256
+    pad: 1
+    kernel_size: 3
+    group: 2
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
+      value: 0.1
+    }
+  }
+}
+layer {
+  name: "relu5"
+  type: "ReLU"
+  bottom: "conv5"
+  top: "conv5"
+}
+layer {
+  name: "pool5"
+  type: "Pooling"
+  bottom: "conv5"
+  top: "pool5"
+  pooling_param {
+    pool: MAX
+    kernel_size: 3
+    stride: 2
+  }
+}
+layer {
+  name: "fc6"
+  type: "InnerProduct"
+  bottom: "pool5"
+  top: "fc6"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  inner_product_param {
+    num_output: 4096
+    weight_filler {
+      type: "gaussian"
+      std: 0.005
+    }
+    bias_filler {
+      type: "constant"
+      value: 0.1
+    }
+  }
+}
+layer {
+  name: "relu6"
+  type: "ReLU"
+  bottom: "fc6"
+  top: "fc6"
+}
+layer {
+  name: "drop6"
+  type: "Dropout"
+  bottom: "fc6"
+  top: "fc6"
+  dropout_param {
+    dropout_ratio: 0.5
+  }
+}
+layer {
+  name: "fc7"
+  type: "InnerProduct"
+  bottom: "fc6"
+  top: "fc7"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  inner_product_param {
+    num_output: 4096
+    weight_filler {
+      type: "gaussian"
+      std: 0.005
+    }
+    bias_filler {
+      type: "constant"
+      value: 0.1
+    }
+  }
+}
+layer {
+  name: "relu7"
+  type: "ReLU"
+  bottom: "fc7"
+  top: "fc7"
+}
+layer {
+  name: "drop7"
+  type: "Dropout"
+  bottom: "fc7"
+  top: "fc7"
+  dropout_param {
+    dropout_ratio: 0.5
+  }
+}
+layer {
+  name: "fc8_plantvillage"
+  type: "InnerProduct"
+  bottom: "fc7"
+  top: "fc8_plantvillage"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  inner_product_param {
+    num_output: 38
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+layer {
+  name: "prob"
+  type: "Softmax"
+  bottom: "fc8_plantvillage"
+  top: "prob"
+  include {
+    phase: TEST
+  }
+}
+layer {
+  name: "hdf5out"
+  type: "HDF5Output"
+  bottom: "prob"
+  bottom: "label"
+  include {
+    phase: TEST
+  }
+  hdf5_output_param {
+    file_name: "hdf5_dumps/iter_874.h5"
+  }
+}
+layer {
+  name: "loss"
+  type: "SoftmaxWithLoss"
+  bottom: "fc8_plantvillage"
+  bottom: "label"
+  top: "loss"
+}
+layer {
+  name: "accuracy"
+  type: "Accuracy"
+  bottom: "fc8_plantvillage"
+  bottom: "label"
+  top: "accuracy"
+  include {
+    phase: TEST
+  }
+}
+I0403 13:09:50.721240 10406 layer_factory.hpp:77] Creating layer data
+I0403 13:09:50.721920 10406 net.cpp:91] Creating Layer data
+I0403 13:09:50.721953 10406 net.cpp:399] data -> data
+I0403 13:09:50.722004 10406 net.cpp:399] data -> label
+I0403 13:09:50.722040 10406 data_transformer.cpp:25] Loading mean file from: /home/mohanty/data/final_dataset/lmdb/color-80-20/mean.binaryproto
+I0403 13:09:50.724674 10410 db_lmdb.cpp:38] Opened lmdb /home/mohanty/data/final_dataset/lmdb/color-80-20/test_db
+I0403 13:09:50.736577 10406 data_layer.cpp:41] output data size: 100,3,227,227
+I0403 13:09:50.856576 10406 net.cpp:141] Setting up data
+I0403 13:09:50.856643 10406 net.cpp:148] Top shape: 100 3 227 227 (15458700)
+I0403 13:09:50.856667 10406 net.cpp:148] Top shape: 100 (100)
+I0403 13:09:50.856683 10406 net.cpp:156] Memory required for data: 61835200
+I0403 13:09:50.856709 10406 layer_factory.hpp:77] Creating layer label_data_1_split
+I0403 13:09:50.856735 10406 net.cpp:91] Creating Layer label_data_1_split
+I0403 13:09:50.856752 10406 net.cpp:425] label_data_1_split <- label
+I0403 13:09:50.856784 10406 net.cpp:399] label_data_1_split -> label_data_1_split_0
+I0403 13:09:50.856812 10406 net.cpp:399] label_data_1_split -> label_data_1_split_1
+I0403 13:09:50.856832 10406 net.cpp:399] label_data_1_split -> label_data_1_split_2
+I0403 13:09:50.856896 10406 net.cpp:141] Setting up label_data_1_split
+I0403 13:09:50.856920 10406 net.cpp:148] Top shape: 100 (100)
+I0403 13:09:50.856937 10406 net.cpp:148] Top shape: 100 (100)
+I0403 13:09:50.856955 10406 net.cpp:148] Top shape: 100 (100)
+I0403 13:09:50.856968 10406 net.cpp:156] Memory required for data: 61836400
+I0403 13:09:50.856983 10406 layer_factory.hpp:77] Creating layer conv1
+I0403 13:09:50.857017 10406 net.cpp:91] Creating Layer conv1
+I0403 13:09:50.857035 10406 net.cpp:425] conv1 <- data
+I0403 13:09:50.857054 10406 net.cpp:399] conv1 -> conv1
+I0403 13:09:50.997412 10406 net.cpp:141] Setting up conv1
+I0403 13:09:50.997488 10406 net.cpp:148] Top shape: 100 96 55 55 (29040000)
+I0403 13:09:50.997504 10406 net.cpp:156] Memory required for data: 177996400
+I0403 13:09:50.997535 10406 layer_factory.hpp:77] Creating layer relu1
+I0403 13:09:50.997563 10406 net.cpp:91] Creating Layer relu1
+I0403 13:09:50.997581 10406 net.cpp:425] relu1 <- conv1
+I0403 13:09:50.997603 10406 net.cpp:386] relu1 -> conv1 (in-place)
+I0403 13:09:50.997861 10406 net.cpp:141] Setting up relu1
+I0403 13:09:50.997889 10406 net.cpp:148] Top shape: 100 96 55 55 (29040000)
+I0403 13:09:50.997905 10406 net.cpp:156] Memory required for data: 294156400
+I0403 13:09:50.997952 10406 layer_factory.hpp:77] Creating layer norm1
+I0403 13:09:50.997980 10406 net.cpp:91] Creating Layer norm1
+I0403 13:09:50.997998 10406 net.cpp:425] norm1 <- conv1
+I0403 13:09:50.998016 10406 net.cpp:399] norm1 -> norm1
+I0403 13:09:50.998322 10406 net.cpp:141] Setting up norm1
+I0403 13:09:50.998350 10406 net.cpp:148] Top shape: 100 96 55 55 (29040000)
+I0403 13:09:50.998365 10406 net.cpp:156] Memory required for data: 410316400
+I0403 13:09:50.998381 10406 layer_factory.hpp:77] Creating layer pool1
+I0403 13:09:50.998404 10406 net.cpp:91] Creating Layer pool1
+I0403 13:09:50.998420 10406 net.cpp:425] pool1 <- norm1
+I0403 13:09:50.998438 10406 net.cpp:399] pool1 -> pool1
+I0403 13:09:50.998505 10406 net.cpp:141] Setting up pool1
+I0403 13:09:50.998528 10406 net.cpp:148] Top shape: 100 96 27 27 (6998400)
+I0403 13:09:50.998543 10406 net.cpp:156] Memory required for data: 438310000
+I0403 13:09:50.998558 10406 layer_factory.hpp:77] Creating layer conv2
+I0403 13:09:50.998582 10406 net.cpp:91] Creating Layer conv2
+I0403 13:09:50.998602 10406 net.cpp:425] conv2 <- pool1
+I0403 13:09:50.998623 10406 net.cpp:399] conv2 -> conv2
+I0403 13:09:51.013464 10406 net.cpp:141] Setting up conv2
+I0403 13:09:51.013497 10406 net.cpp:148] Top shape: 100 256 27 27 (18662400)
+I0403 13:09:51.013514 10406 net.cpp:156] Memory required for data: 512959600
+I0403 13:09:51.013536 10406 layer_factory.hpp:77] Creating layer relu2
+I0403 13:09:51.013559 10406 net.cpp:91] Creating Layer relu2
+I0403 13:09:51.013576 10406 net.cpp:425] relu2 <- conv2
+I0403 13:09:51.013593 10406 net.cpp:386] relu2 -> conv2 (in-place)
+I0403 13:09:51.013897 10406 net.cpp:141] Setting up relu2
+I0403 13:09:51.013923 10406 net.cpp:148] Top shape: 100 256 27 27 (18662400)
+I0403 13:09:51.013938 10406 net.cpp:156] Memory required for data: 587609200
+I0403 13:09:51.013953 10406 layer_factory.hpp:77] Creating layer norm2
+I0403 13:09:51.013975 10406 net.cpp:91] Creating Layer norm2
+I0403 13:09:51.013993 10406 net.cpp:425] norm2 <- conv2
+I0403 13:09:51.014013 10406 net.cpp:399] norm2 -> norm2
+I0403 13:09:51.014212 10406 net.cpp:141] Setting up norm2
+I0403 13:09:51.014237 10406 net.cpp:148] Top shape: 100 256 27 27 (18662400)
+I0403 13:09:51.014253 10406 net.cpp:156] Memory required for data: 662258800
+I0403 13:09:51.014268 10406 layer_factory.hpp:77] Creating layer pool2
+I0403 13:09:51.014288 10406 net.cpp:91] Creating Layer pool2
+I0403 13:09:51.014304 10406 net.cpp:425] pool2 <- norm2
+I0403 13:09:51.014320 10406 net.cpp:399] pool2 -> pool2
+I0403 13:09:51.014374 10406 net.cpp:141] Setting up pool2
+I0403 13:09:51.014396 10406 net.cpp:148] Top shape: 100 256 13 13 (4326400)
+I0403 13:09:51.014410 10406 net.cpp:156] Memory required for data: 679564400
+I0403 13:09:51.014425 10406 layer_factory.hpp:77] Creating layer conv3
+I0403 13:09:51.014447 10406 net.cpp:91] Creating Layer conv3
+I0403 13:09:51.014464 10406 net.cpp:425] conv3 <- pool2
+I0403 13:09:51.014484 10406 net.cpp:399] conv3 -> conv3
+I0403 13:09:51.052613 10406 net.cpp:141] Setting up conv3
+I0403 13:09:51.052686 10406 net.cpp:148] Top shape: 100 384 13 13 (6489600)
+I0403 13:09:51.052702 10406 net.cpp:156] Memory required for data: 705522800
+I0403 13:09:51.052731 10406 layer_factory.hpp:77] Creating layer relu3
+I0403 13:09:51.052754 10406 net.cpp:91] Creating Layer relu3
+I0403 13:09:51.052772 10406 net.cpp:425] relu3 <- conv3
+I0403 13:09:51.052790 10406 net.cpp:386] relu3 -> conv3 (in-place)
+I0403 13:09:51.053078 10406 net.cpp:141] Setting up relu3
+I0403 13:09:51.053105 10406 net.cpp:148] Top shape: 100 384 13 13 (6489600)
+I0403 13:09:51.053120 10406 net.cpp:156] Memory required for data: 731481200
+I0403 13:09:51.053135 10406 layer_factory.hpp:77] Creating layer conv4
+I0403 13:09:51.053161 10406 net.cpp:91] Creating Layer conv4
+I0403 13:09:51.053179 10406 net.cpp:425] conv4 <- conv3
+I0403 13:09:51.053199 10406 net.cpp:399] conv4 -> conv4
+I0403 13:09:51.082720 10406 net.cpp:141] Setting up conv4
+I0403 13:09:51.082779 10406 net.cpp:148] Top shape: 100 384 13 13 (6489600)
+I0403 13:09:51.082829 10406 net.cpp:156] Memory required for data: 757439600
+I0403 13:09:51.082850 10406 layer_factory.hpp:77] Creating layer relu4
+I0403 13:09:51.082875 10406 net.cpp:91] Creating Layer relu4
+I0403 13:09:51.082893 10406 net.cpp:425] relu4 <- conv4
+I0403 13:09:51.082911 10406 net.cpp:386] relu4 -> conv4 (in-place)
+I0403 13:09:51.083185 10406 net.cpp:141] Setting up relu4
+I0403 13:09:51.083211 10406 net.cpp:148] Top shape: 100 384 13 13 (6489600)
+I0403 13:09:51.083227 10406 net.cpp:156] Memory required for data: 783398000
+I0403 13:09:51.083242 10406 layer_factory.hpp:77] Creating layer conv5
+I0403 13:09:51.083267 10406 net.cpp:91] Creating Layer conv5
+I0403 13:09:51.083283 10406 net.cpp:425] conv5 <- conv4
+I0403 13:09:51.083304 10406 net.cpp:399] conv5 -> conv5
+I0403 13:09:51.103693 10406 net.cpp:141] Setting up conv5
+I0403 13:09:51.103744 10406 net.cpp:148] Top shape: 100 256 13 13 (4326400)
+I0403 13:09:51.103760 10406 net.cpp:156] Memory required for data: 800703600
+I0403 13:09:51.103785 10406 layer_factory.hpp:77] Creating layer relu5
+I0403 13:09:51.103807 10406 net.cpp:91] Creating Layer relu5
+I0403 13:09:51.103824 10406 net.cpp:425] relu5 <- conv5
+I0403 13:09:51.103842 10406 net.cpp:386] relu5 -> conv5 (in-place)
+I0403 13:09:51.104130 10406 net.cpp:141] Setting up relu5
+I0403 13:09:51.104157 10406 net.cpp:148] Top shape: 100 256 13 13 (4326400)
+I0403 13:09:51.104172 10406 net.cpp:156] Memory required for data: 818009200
+I0403 13:09:51.104187 10406 layer_factory.hpp:77] Creating layer pool5
+I0403 13:09:51.104212 10406 net.cpp:91] Creating Layer pool5
+I0403 13:09:51.104229 10406 net.cpp:425] pool5 <- conv5
+I0403 13:09:51.104251 10406 net.cpp:399] pool5 -> pool5
+I0403 13:09:51.104313 10406 net.cpp:141] Setting up pool5
+I0403 13:09:51.104337 10406 net.cpp:148] Top shape: 100 256 6 6 (921600)
+I0403 13:09:51.104351 10406 net.cpp:156] Memory required for data: 821695600
+I0403 13:09:51.104367 10406 layer_factory.hpp:77] Creating layer fc6
+I0403 13:09:51.104394 10406 net.cpp:91] Creating Layer fc6
+I0403 13:09:51.104413 10406 net.cpp:425] fc6 <- pool5
+I0403 13:09:51.104430 10406 net.cpp:399] fc6 -> fc6
+I0403 13:09:52.652657 10406 net.cpp:141] Setting up fc6
+I0403 13:09:52.652698 10406 net.cpp:148] Top shape: 100 4096 (409600)
+I0403 13:09:52.652715 10406 net.cpp:156] Memory required for data: 823334000
+I0403 13:09:52.652736 10406 layer_factory.hpp:77] Creating layer relu6
+I0403 13:09:52.652757 10406 net.cpp:91] Creating Layer relu6
+I0403 13:09:52.652773 10406 net.cpp:425] relu6 <- fc6
+I0403 13:09:52.652794 10406 net.cpp:386] relu6 -> fc6 (in-place)
+I0403 13:09:52.653014 10406 net.cpp:141] Setting up relu6
+I0403 13:09:52.653039 10406 net.cpp:148] Top shape: 100 4096 (409600)
+I0403 13:09:52.653053 10406 net.cpp:156] Memory required for data: 824972400
+I0403 13:09:52.653069 10406 layer_factory.hpp:77] Creating layer drop6
+I0403 13:09:52.653090 10406 net.cpp:91] Creating Layer drop6
+I0403 13:09:52.653105 10406 net.cpp:425] drop6 <- fc6
+I0403 13:09:52.653122 10406 net.cpp:386] drop6 -> fc6 (in-place)
+I0403 13:09:52.653173 10406 net.cpp:141] Setting up drop6
+I0403 13:09:52.653197 10406 net.cpp:148] Top shape: 100 4096 (409600)
+I0403 13:09:52.653210 10406 net.cpp:156] Memory required for data: 826610800
+I0403 13:09:52.653225 10406 layer_factory.hpp:77] Creating layer fc7
+I0403 13:09:52.653244 10406 net.cpp:91] Creating Layer fc7
+I0403 13:09:52.653259 10406 net.cpp:425] fc7 <- fc6
+I0403 13:09:52.653280 10406 net.cpp:399] fc7 -> fc7
+I0403 13:09:53.338311 10406 net.cpp:141] Setting up fc7
+I0403 13:09:53.338392 10406 net.cpp:148] Top shape: 100 4096 (409600)
+I0403 13:09:53.338408 10406 net.cpp:156] Memory required for data: 828249200
+I0403 13:09:53.338429 10406 layer_factory.hpp:77] Creating layer relu7
+I0403 13:09:53.338451 10406 net.cpp:91] Creating Layer relu7
+I0403 13:09:53.338469 10406 net.cpp:425] relu7 <- fc7
+I0403 13:09:53.338488 10406 net.cpp:386] relu7 -> fc7 (in-place)
+I0403 13:09:53.338918 10406 net.cpp:141] Setting up relu7
+I0403 13:09:53.338944 10406 net.cpp:148] Top shape: 100 4096 (409600)
+I0403 13:09:53.338999 10406 net.cpp:156] Memory required for data: 829887600
+I0403 13:09:53.339015 10406 layer_factory.hpp:77] Creating layer drop7
+I0403 13:09:53.339036 10406 net.cpp:91] Creating Layer drop7
+I0403 13:09:53.339052 10406 net.cpp:425] drop7 <- fc7
+I0403 13:09:53.339069 10406 net.cpp:386] drop7 -> fc7 (in-place)
+I0403 13:09:53.339112 10406 net.cpp:141] Setting up drop7
+I0403 13:09:53.339135 10406 net.cpp:148] Top shape: 100 4096 (409600)
+I0403 13:09:53.339153 10406 net.cpp:156] Memory required for data: 831526000
+I0403 13:09:53.339165 10406 layer_factory.hpp:77] Creating layer fc8_plantvillage
+I0403 13:09:53.339185 10406 net.cpp:91] Creating Layer fc8_plantvillage
+I0403 13:09:53.339200 10406 net.cpp:425] fc8_plantvillage <- fc7
+I0403 13:09:53.339221 10406 net.cpp:399] fc8_plantvillage -> fc8_plantvillage
+I0403 13:09:53.345944 10406 net.cpp:141] Setting up fc8_plantvillage
+I0403 13:09:53.345973 10406 net.cpp:148] Top shape: 100 38 (3800)
+I0403 13:09:53.345988 10406 net.cpp:156] Memory required for data: 831541200
+I0403 13:09:53.346006 10406 layer_factory.hpp:77] Creating layer fc8_plantvillage_fc8_plantvillage_0_split
+I0403 13:09:53.346027 10406 net.cpp:91] Creating Layer fc8_plantvillage_fc8_plantvillage_0_split
+I0403 13:09:53.346043 10406 net.cpp:425] fc8_plantvillage_fc8_plantvillage_0_split <- fc8_plantvillage
+I0403 13:09:53.346060 10406 net.cpp:399] fc8_plantvillage_fc8_plantvillage_0_split -> fc8_plantvillage_fc8_plantvillage_0_split_0
+I0403 13:09:53.346091 10406 net.cpp:399] fc8_plantvillage_fc8_plantvillage_0_split -> fc8_plantvillage_fc8_plantvillage_0_split_1
+I0403 13:09:53.346113 10406 net.cpp:399] fc8_plantvillage_fc8_plantvillage_0_split -> fc8_plantvillage_fc8_plantvillage_0_split_2
+I0403 13:09:53.346187 10406 net.cpp:141] Setting up fc8_plantvillage_fc8_plantvillage_0_split
+I0403 13:09:53.346210 10406 net.cpp:148] Top shape: 100 38 (3800)
+I0403 13:09:53.346225 10406 net.cpp:148] Top shape: 100 38 (3800)
+I0403 13:09:53.346240 10406 net.cpp:148] Top shape: 100 38 (3800)
+I0403 13:09:53.346253 10406 net.cpp:156] Memory required for data: 831586800
+I0403 13:09:53.346266 10406 layer_factory.hpp:77] Creating layer prob
+I0403 13:09:53.346287 10406 net.cpp:91] Creating Layer prob
+I0403 13:09:53.346302 10406 net.cpp:425] prob <- fc8_plantvillage_fc8_plantvillage_0_split_0
+I0403 13:09:53.346318 10406 net.cpp:399] prob -> prob
+I0403 13:09:53.346539 10406 net.cpp:141] Setting up prob
+I0403 13:09:53.346563 10406 net.cpp:148] Top shape: 100 38 (3800)
+I0403 13:09:53.346577 10406 net.cpp:156] Memory required for data: 831602000
+I0403 13:09:53.346591 10406 layer_factory.hpp:77] Creating layer hdf5out
+I0403 13:09:53.346618 10406 net.cpp:91] Creating Layer hdf5out
+I0403 13:09:53.346634 10406 net.cpp:425] hdf5out <- prob
+I0403 13:09:53.346649 10406 net.cpp:425] hdf5out <- label_data_1_split_0
+I0403 13:09:53.349048 10406 net.cpp:141] Setting up hdf5out
+I0403 13:09:53.349072 10406 net.cpp:156] Memory required for data: 831602000
+I0403 13:09:53.349097 10406 layer_factory.hpp:77] Creating layer loss
+I0403 13:09:53.349117 10406 net.cpp:91] Creating Layer loss
+I0403 13:09:53.349133 10406 net.cpp:425] loss <- fc8_plantvillage_fc8_plantvillage_0_split_1
+I0403 13:09:53.349149 10406 net.cpp:425] loss <- label_data_1_split_1
+I0403 13:09:53.349169 10406 net.cpp:399] loss -> loss
+I0403 13:09:53.349195 10406 layer_factory.hpp:77] Creating layer loss
+I0403 13:09:53.349575 10406 net.cpp:141] Setting up loss
+I0403 13:09:53.349606 10406 net.cpp:148] Top shape: (1)
+I0403 13:09:53.349624 10406 net.cpp:151]     with loss weight 1
+I0403 13:09:53.349668 10406 net.cpp:156] Memory required for data: 831602004
+I0403 13:09:53.349684 10406 layer_factory.hpp:77] Creating layer accuracy
+I0403 13:09:53.349706 10406 net.cpp:91] Creating Layer accuracy
+I0403 13:09:53.349723 10406 net.cpp:425] accuracy <- fc8_plantvillage_fc8_plantvillage_0_split_2
+I0403 13:09:53.349740 10406 net.cpp:425] accuracy <- label_data_1_split_2
+I0403 13:09:53.349757 10406 net.cpp:399] accuracy -> accuracy
+I0403 13:09:53.349779 10406 net.cpp:141] Setting up accuracy
+I0403 13:09:53.349797 10406 net.cpp:148] Top shape: (1)
+I0403 13:09:53.349828 10406 net.cpp:156] Memory required for data: 831602008
+I0403 13:09:53.349843 10406 net.cpp:219] accuracy does not need backward computation.
+I0403 13:09:53.349858 10406 net.cpp:217] loss needs backward computation.
+I0403 13:09:53.349874 10406 net.cpp:219] hdf5out does not need backward computation.
+I0403 13:09:53.349889 10406 net.cpp:219] prob does not need backward computation.
+I0403 13:09:53.349903 10406 net.cpp:217] fc8_plantvillage_fc8_plantvillage_0_split needs backward computation.
+I0403 13:09:53.349917 10406 net.cpp:217] fc8_plantvillage needs backward computation.
+I0403 13:09:53.349931 10406 net.cpp:217] drop7 needs backward computation.
+I0403 13:09:53.349944 10406 net.cpp:217] relu7 needs backward computation.
+I0403 13:09:53.349957 10406 net.cpp:217] fc7 needs backward computation.
+I0403 13:09:53.349972 10406 net.cpp:217] drop6 needs backward computation.
+I0403 13:09:53.349985 10406 net.cpp:217] relu6 needs backward computation.
+I0403 13:09:53.349999 10406 net.cpp:217] fc6 needs backward computation.
+I0403 13:09:53.350013 10406 net.cpp:217] pool5 needs backward computation.
+I0403 13:09:53.350028 10406 net.cpp:217] relu5 needs backward computation.
+I0403 13:09:53.350041 10406 net.cpp:217] conv5 needs backward computation.
+I0403 13:09:53.350054 10406 net.cpp:217] relu4 needs backward computation.
+I0403 13:09:53.350069 10406 net.cpp:217] conv4 needs backward computation.
+I0403 13:09:53.350082 10406 net.cpp:217] relu3 needs backward computation.
+I0403 13:09:53.350096 10406 net.cpp:217] conv3 needs backward computation.
+I0403 13:09:53.350111 10406 net.cpp:217] pool2 needs backward computation.
+I0403 13:09:53.350126 10406 net.cpp:217] norm2 needs backward computation.
+I0403 13:09:53.350141 10406 net.cpp:217] relu2 needs backward computation.
+I0403 13:09:53.350153 10406 net.cpp:217] conv2 needs backward computation.
+I0403 13:09:53.350167 10406 net.cpp:217] pool1 needs backward computation.
+I0403 13:09:53.350183 10406 net.cpp:217] norm1 needs backward computation.
+I0403 13:09:53.350195 10406 net.cpp:217] relu1 needs backward computation.
+I0403 13:09:53.350209 10406 net.cpp:217] conv1 needs backward computation.
+I0403 13:09:53.350225 10406 net.cpp:219] label_data_1_split does not need backward computation.
+I0403 13:09:53.350244 10406 net.cpp:219] data does not need backward computation.
+I0403 13:09:53.350258 10406 net.cpp:261] This network produces output accuracy
+I0403 13:09:53.350278 10406 net.cpp:261] This network produces output loss
+I0403 13:09:53.350314 10406 net.cpp:274] Network initialization done.
+I0403 13:09:54.051440 10406 caffe.cpp:252] Running for 106 iterations.
+I0403 13:09:54.185420 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :0
+I0403 13:09:54.186285 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:09:54.186830 10406 caffe.cpp:275] Batch 0, accuracy = 0.97
+I0403 13:09:54.186877 10406 caffe.cpp:275] Batch 0, loss = 0.078706
+I0403 13:09:54.299221 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :1
+I0403 13:09:54.299445 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:09:54.299703 10406 caffe.cpp:275] Batch 1, accuracy = 0.98
+I0403 13:09:54.299733 10406 caffe.cpp:275] Batch 1, loss = 0.0471957
+I0403 13:09:54.405525 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :2
+I0403 13:09:54.405819 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:09:54.406095 10406 caffe.cpp:275] Batch 2, accuracy = 0.95
+I0403 13:09:54.406129 10406 caffe.cpp:275] Batch 2, loss = 0.108154
+I0403 13:09:54.517431 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :3
+I0403 13:09:54.518038 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:09:54.519331 10406 caffe.cpp:275] Batch 3, accuracy = 0.96
+I0403 13:09:54.519418 10406 caffe.cpp:275] Batch 3, loss = 0.0835159
+I0403 13:09:54.624995 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :4
+I0403 13:09:54.625275 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:09:54.625543 10406 caffe.cpp:275] Batch 4, accuracy = 0.95
+I0403 13:09:54.625576 10406 caffe.cpp:275] Batch 4, loss = 0.129377
+I0403 13:09:54.625603 10406 blocking_queue.cpp:50] Data layer prefetch queue empty
+I0403 13:09:54.812625 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :5
+I0403 13:09:54.812882 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:09:54.813158 10406 caffe.cpp:275] Batch 5, accuracy = 0.96
+I0403 13:09:54.813191 10406 caffe.cpp:275] Batch 5, loss = 0.102514
+I0403 13:09:54.991937 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :6
+I0403 13:09:54.992189 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:09:54.992473 10406 caffe.cpp:275] Batch 6, accuracy = 0.95
+I0403 13:09:54.992507 10406 caffe.cpp:275] Batch 6, loss = 0.180497
+I0403 13:09:55.176964 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :7
+I0403 13:09:55.177280 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:09:55.177558 10406 caffe.cpp:275] Batch 7, accuracy = 0.97
+I0403 13:09:55.177592 10406 caffe.cpp:275] Batch 7, loss = 0.109099
+I0403 13:09:55.364259 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :8
+I0403 13:09:55.364516 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:09:55.364816 10406 caffe.cpp:275] Batch 8, accuracy = 0.96
+I0403 13:09:55.364851 10406 caffe.cpp:275] Batch 8, loss = 0.152973
+I0403 13:09:55.549379 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :9
+I0403 13:09:55.549654 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:09:55.549923 10406 caffe.cpp:275] Batch 9, accuracy = 0.99
+I0403 13:09:55.549957 10406 caffe.cpp:275] Batch 9, loss = 0.017518
+I0403 13:09:55.728379 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :10
+I0403 13:09:55.728698 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:09:55.728956 10406 caffe.cpp:275] Batch 10, accuracy = 0.98
+I0403 13:09:55.728991 10406 caffe.cpp:275] Batch 10, loss = 0.0436238
+I0403 13:09:55.909180 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :11
+I0403 13:09:55.909442 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:09:55.909739 10406 caffe.cpp:275] Batch 11, accuracy = 0.99
+I0403 13:09:55.909775 10406 caffe.cpp:275] Batch 11, loss = 0.0738991
+I0403 13:09:56.087213 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :12
+I0403 13:09:56.087538 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:09:56.087817 10406 caffe.cpp:275] Batch 12, accuracy = 0.97
+I0403 13:09:56.087852 10406 caffe.cpp:275] Batch 12, loss = 0.100048
+I0403 13:09:56.266829 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :13
+I0403 13:09:56.267122 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:09:56.267412 10406 caffe.cpp:275] Batch 13, accuracy = 0.97
+I0403 13:09:56.267446 10406 caffe.cpp:275] Batch 13, loss = 0.095623
+I0403 13:09:56.447842 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :14
+I0403 13:09:56.448102 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:09:56.448364 10406 caffe.cpp:275] Batch 14, accuracy = 0.98
+I0403 13:09:56.448395 10406 caffe.cpp:275] Batch 14, loss = 0.106924
+I0403 13:09:56.630609 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :15
+I0403 13:09:56.630885 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:09:56.631170 10406 caffe.cpp:275] Batch 15, accuracy = 0.96
+I0403 13:09:56.631203 10406 caffe.cpp:275] Batch 15, loss = 0.0981444
+I0403 13:09:56.814352 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :16
+I0403 13:09:56.814638 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:09:56.814995 10406 caffe.cpp:275] Batch 16, accuracy = 0.98
+I0403 13:09:56.815029 10406 caffe.cpp:275] Batch 16, loss = 0.0811145
+I0403 13:09:57.039844 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :17
+I0403 13:09:57.040098 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:09:57.040397 10406 caffe.cpp:275] Batch 17, accuracy = 0.98
+I0403 13:09:57.040431 10406 caffe.cpp:275] Batch 17, loss = 0.0565411
+I0403 13:09:57.221204 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :18
+I0403 13:09:57.221487 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:09:57.221783 10406 caffe.cpp:275] Batch 18, accuracy = 0.97
+I0403 13:09:57.221817 10406 caffe.cpp:275] Batch 18, loss = 0.0643497
+I0403 13:09:57.403877 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :19
+I0403 13:09:57.404119 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:09:57.404407 10406 caffe.cpp:275] Batch 19, accuracy = 0.97
+I0403 13:09:57.404451 10406 caffe.cpp:275] Batch 19, loss = 0.0520183
+I0403 13:09:57.588521 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :20
+I0403 13:09:57.588796 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:09:57.589076 10406 caffe.cpp:275] Batch 20, accuracy = 0.96
+I0403 13:09:57.589112 10406 caffe.cpp:275] Batch 20, loss = 0.0828647
+I0403 13:09:57.773249 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :21
+I0403 13:09:57.773531 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:09:57.773810 10406 caffe.cpp:275] Batch 21, accuracy = 0.98
+I0403 13:09:57.773845 10406 caffe.cpp:275] Batch 21, loss = 0.0929682
+I0403 13:09:57.954270 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :22
+I0403 13:09:57.954568 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:09:57.954846 10406 caffe.cpp:275] Batch 22, accuracy = 0.97
+I0403 13:09:57.954879 10406 caffe.cpp:275] Batch 22, loss = 0.0902246
+I0403 13:09:58.132707 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :23
+I0403 13:09:58.132992 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:09:58.133265 10406 caffe.cpp:275] Batch 23, accuracy = 0.97
+I0403 13:09:58.133299 10406 caffe.cpp:275] Batch 23, loss = 0.115818
+I0403 13:09:58.310395 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :24
+I0403 13:09:58.310686 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:09:58.310973 10406 caffe.cpp:275] Batch 24, accuracy = 0.99
+I0403 13:09:58.311009 10406 caffe.cpp:275] Batch 24, loss = 0.0261071
+I0403 13:09:58.491114 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :25
+I0403 13:09:58.491396 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:09:58.491736 10406 caffe.cpp:275] Batch 25, accuracy = 1
+I0403 13:09:58.491770 10406 caffe.cpp:275] Batch 25, loss = 0.0096477
+I0403 13:09:58.670410 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :26
+I0403 13:09:58.670711 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:09:58.671000 10406 caffe.cpp:275] Batch 26, accuracy = 0.96
+I0403 13:09:58.671036 10406 caffe.cpp:275] Batch 26, loss = 0.0685837
+I0403 13:09:58.849604 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :27
+I0403 13:09:58.849870 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:09:58.850138 10406 caffe.cpp:275] Batch 27, accuracy = 0.99
+I0403 13:09:58.850172 10406 caffe.cpp:275] Batch 27, loss = 0.0312106
+I0403 13:09:59.027920 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :28
+I0403 13:09:59.028198 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:09:59.028483 10406 caffe.cpp:275] Batch 28, accuracy = 0.97
+I0403 13:09:59.028544 10406 caffe.cpp:275] Batch 28, loss = 0.068464
+I0403 13:09:59.206701 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :29
+I0403 13:09:59.207010 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:09:59.207310 10406 caffe.cpp:275] Batch 29, accuracy = 0.97
+I0403 13:09:59.207345 10406 caffe.cpp:275] Batch 29, loss = 0.05893
+I0403 13:09:59.384982 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :30
+I0403 13:09:59.385252 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:09:59.385529 10406 caffe.cpp:275] Batch 30, accuracy = 0.99
+I0403 13:09:59.385562 10406 caffe.cpp:275] Batch 30, loss = 0.0583309
+I0403 13:09:59.564916 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :31
+I0403 13:09:59.565201 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:09:59.565467 10406 caffe.cpp:275] Batch 31, accuracy = 0.96
+I0403 13:09:59.565501 10406 caffe.cpp:275] Batch 31, loss = 0.171516
+I0403 13:09:59.743407 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :32
+I0403 13:09:59.743680 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:09:59.743959 10406 caffe.cpp:275] Batch 32, accuracy = 0.99
+I0403 13:09:59.743993 10406 caffe.cpp:275] Batch 32, loss = 0.0158625
+I0403 13:09:59.930762 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :33
+I0403 13:09:59.931093 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:09:59.931375 10406 caffe.cpp:275] Batch 33, accuracy = 0.98
+I0403 13:09:59.931409 10406 caffe.cpp:275] Batch 33, loss = 0.0547103
+I0403 13:10:00.166697 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :34
+I0403 13:10:00.166965 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:00.167253 10406 caffe.cpp:275] Batch 34, accuracy = 0.96
+I0403 13:10:00.167289 10406 caffe.cpp:275] Batch 34, loss = 0.0994796
+I0403 13:10:00.368839 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :35
+I0403 13:10:00.369107 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:00.369381 10406 caffe.cpp:275] Batch 35, accuracy = 0.98
+I0403 13:10:00.369416 10406 caffe.cpp:275] Batch 35, loss = 0.0772297
+I0403 13:10:00.555173 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :36
+I0403 13:10:00.555459 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:00.555737 10406 caffe.cpp:275] Batch 36, accuracy = 0.99
+I0403 13:10:00.555770 10406 caffe.cpp:275] Batch 36, loss = 0.029212
+I0403 13:10:00.737388 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :37
+I0403 13:10:00.737661 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:00.737931 10406 caffe.cpp:275] Batch 37, accuracy = 0.9
+I0403 13:10:00.737964 10406 caffe.cpp:275] Batch 37, loss = 0.196552
+I0403 13:10:00.920485 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :38
+I0403 13:10:00.923048 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:00.923374 10406 caffe.cpp:275] Batch 38, accuracy = 0.98
+I0403 13:10:00.923403 10406 caffe.cpp:275] Batch 38, loss = 0.0622062
+I0403 13:10:01.107576 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :39
+I0403 13:10:01.107791 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:01.108057 10406 caffe.cpp:275] Batch 39, accuracy = 0.94
+I0403 13:10:01.108084 10406 caffe.cpp:275] Batch 39, loss = 0.115336
+I0403 13:10:01.295569 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :40
+I0403 13:10:01.295810 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:01.296079 10406 caffe.cpp:275] Batch 40, accuracy = 0.96
+I0403 13:10:01.296108 10406 caffe.cpp:275] Batch 40, loss = 0.113133
+I0403 13:10:01.482312 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :41
+I0403 13:10:01.482517 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:01.482880 10406 caffe.cpp:275] Batch 41, accuracy = 0.99
+I0403 13:10:01.482913 10406 caffe.cpp:275] Batch 41, loss = 0.05568
+I0403 13:10:01.666090 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :42
+I0403 13:10:01.666306 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:01.666573 10406 caffe.cpp:275] Batch 42, accuracy = 0.99
+I0403 13:10:01.666605 10406 caffe.cpp:275] Batch 42, loss = 0.0487802
+I0403 13:10:01.849740 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :43
+I0403 13:10:01.849938 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:01.850224 10406 caffe.cpp:275] Batch 43, accuracy = 0.98
+I0403 13:10:01.850263 10406 caffe.cpp:275] Batch 43, loss = 0.0787705
+I0403 13:10:02.033537 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :44
+I0403 13:10:02.033749 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:02.034020 10406 caffe.cpp:275] Batch 44, accuracy = 0.97
+I0403 13:10:02.034049 10406 caffe.cpp:275] Batch 44, loss = 0.0535286
+I0403 13:10:02.217834 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :45
+I0403 13:10:02.218067 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:02.218363 10406 caffe.cpp:275] Batch 45, accuracy = 0.98
+I0403 13:10:02.218392 10406 caffe.cpp:275] Batch 45, loss = 0.0600586
+I0403 13:10:02.403183 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :46
+I0403 13:10:02.403408 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:02.403698 10406 caffe.cpp:275] Batch 46, accuracy = 0.95
+I0403 13:10:02.403729 10406 caffe.cpp:275] Batch 46, loss = 0.0884913
+I0403 13:10:02.586453 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :47
+I0403 13:10:02.586697 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:02.586971 10406 caffe.cpp:275] Batch 47, accuracy = 0.99
+I0403 13:10:02.587002 10406 caffe.cpp:275] Batch 47, loss = 0.0586463
+I0403 13:10:02.770393 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :48
+I0403 13:10:02.770658 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:02.770933 10406 caffe.cpp:275] Batch 48, accuracy = 0.99
+I0403 13:10:02.770966 10406 caffe.cpp:275] Batch 48, loss = 0.0535939
+I0403 13:10:02.954370 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :49
+I0403 13:10:02.954666 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:02.954946 10406 caffe.cpp:275] Batch 49, accuracy = 0.98
+I0403 13:10:02.954977 10406 caffe.cpp:275] Batch 49, loss = 0.115462
+I0403 13:10:03.137053 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :50
+I0403 13:10:03.137295 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:03.137612 10406 caffe.cpp:275] Batch 50, accuracy = 0.99
+I0403 13:10:03.137645 10406 caffe.cpp:275] Batch 50, loss = 0.0249984
+I0403 13:10:03.322602 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :51
+I0403 13:10:03.322846 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:03.323122 10406 caffe.cpp:275] Batch 51, accuracy = 0.98
+I0403 13:10:03.323155 10406 caffe.cpp:275] Batch 51, loss = 0.0565333
+I0403 13:10:03.506968 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :52
+I0403 13:10:03.507244 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:03.507556 10406 caffe.cpp:275] Batch 52, accuracy = 0.97
+I0403 13:10:03.507591 10406 caffe.cpp:275] Batch 52, loss = 0.0780352
+I0403 13:10:03.691534 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :53
+I0403 13:10:03.691814 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:03.692095 10406 caffe.cpp:275] Batch 53, accuracy = 0.99
+I0403 13:10:03.692129 10406 caffe.cpp:275] Batch 53, loss = 0.0856965
+I0403 13:10:03.873389 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :54
+I0403 13:10:03.873690 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:03.873977 10406 caffe.cpp:275] Batch 54, accuracy = 0.99
+I0403 13:10:03.874011 10406 caffe.cpp:275] Batch 54, loss = 0.0926902
+I0403 13:10:04.057615 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :55
+I0403 13:10:04.057891 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:04.058169 10406 caffe.cpp:275] Batch 55, accuracy = 0.98
+I0403 13:10:04.058203 10406 caffe.cpp:275] Batch 55, loss = 0.146928
+I0403 13:10:04.241919 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :56
+I0403 13:10:04.242192 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:04.242455 10406 caffe.cpp:275] Batch 56, accuracy = 0.97
+I0403 13:10:04.242487 10406 caffe.cpp:275] Batch 56, loss = 0.08514
+I0403 13:10:04.425231 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :57
+I0403 13:10:04.425555 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:04.425823 10406 caffe.cpp:275] Batch 57, accuracy = 0.95
+I0403 13:10:04.425859 10406 caffe.cpp:275] Batch 57, loss = 0.107961
+I0403 13:10:04.607210 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :58
+I0403 13:10:04.607511 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:04.607786 10406 caffe.cpp:275] Batch 58, accuracy = 0.96
+I0403 13:10:04.607820 10406 caffe.cpp:275] Batch 58, loss = 0.0685541
+I0403 13:10:04.791280 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :59
+I0403 13:10:04.791550 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:04.791853 10406 caffe.cpp:275] Batch 59, accuracy = 0.98
+I0403 13:10:04.791887 10406 caffe.cpp:275] Batch 59, loss = 0.0997083
+I0403 13:10:04.973135 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :60
+I0403 13:10:04.973402 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:04.973677 10406 caffe.cpp:275] Batch 60, accuracy = 0.98
+I0403 13:10:04.973711 10406 caffe.cpp:275] Batch 60, loss = 0.0331587
+I0403 13:10:05.158432 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :61
+I0403 13:10:05.158737 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:05.159039 10406 caffe.cpp:275] Batch 61, accuracy = 0.98
+I0403 13:10:05.159072 10406 caffe.cpp:275] Batch 61, loss = 0.0701608
+I0403 13:10:05.342453 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :62
+I0403 13:10:05.344213 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:05.346132 10406 caffe.cpp:275] Batch 62, accuracy = 1
+I0403 13:10:05.346169 10406 caffe.cpp:275] Batch 62, loss = 0.00645116
+I0403 13:10:05.531339 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :63
+I0403 13:10:05.531626 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:05.531895 10406 caffe.cpp:275] Batch 63, accuracy = 0.99
+I0403 13:10:05.531929 10406 caffe.cpp:275] Batch 63, loss = 0.0477865
+I0403 13:10:05.713982 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :64
+I0403 13:10:05.714656 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:05.714948 10406 caffe.cpp:275] Batch 64, accuracy = 0.96
+I0403 13:10:05.714980 10406 caffe.cpp:275] Batch 64, loss = 0.125482
+I0403 13:10:05.897243 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :65
+I0403 13:10:05.897511 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:05.897783 10406 caffe.cpp:275] Batch 65, accuracy = 0.99
+I0403 13:10:05.897819 10406 caffe.cpp:275] Batch 65, loss = 0.0881774
+I0403 13:10:06.080726 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :66
+I0403 13:10:06.081012 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:06.081349 10406 caffe.cpp:275] Batch 66, accuracy = 1
+I0403 13:10:06.081383 10406 caffe.cpp:275] Batch 66, loss = 0.00808052
+I0403 13:10:06.264744 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :67
+I0403 13:10:06.265051 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:06.265348 10406 caffe.cpp:275] Batch 67, accuracy = 0.97
+I0403 13:10:06.265383 10406 caffe.cpp:275] Batch 67, loss = 0.0766664
+I0403 13:10:06.444439 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :68
+I0403 13:10:06.444715 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:06.445019 10406 caffe.cpp:275] Batch 68, accuracy = 0.95
+I0403 13:10:06.445051 10406 caffe.cpp:275] Batch 68, loss = 0.138331
+I0403 13:10:06.629791 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :69
+I0403 13:10:06.630084 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:06.630415 10406 caffe.cpp:275] Batch 69, accuracy = 0.94
+I0403 13:10:06.630451 10406 caffe.cpp:275] Batch 69, loss = 0.135887
+I0403 13:10:06.811554 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :70
+I0403 13:10:06.811839 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:06.812134 10406 caffe.cpp:275] Batch 70, accuracy = 0.93
+I0403 13:10:06.812170 10406 caffe.cpp:275] Batch 70, loss = 0.242464
+I0403 13:10:07.002207 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :71
+I0403 13:10:07.002496 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:07.002787 10406 caffe.cpp:275] Batch 71, accuracy = 0.96
+I0403 13:10:07.002823 10406 caffe.cpp:275] Batch 71, loss = 0.141779
+I0403 13:10:07.191836 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :72
+I0403 13:10:07.192133 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:07.192435 10406 caffe.cpp:275] Batch 72, accuracy = 0.98
+I0403 13:10:07.192471 10406 caffe.cpp:275] Batch 72, loss = 0.0522205
+I0403 13:10:07.377284 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :73
+I0403 13:10:07.377553 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:07.377827 10406 caffe.cpp:275] Batch 73, accuracy = 0.98
+I0403 13:10:07.377862 10406 caffe.cpp:275] Batch 73, loss = 0.0554679
+I0403 13:10:07.560017 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :74
+I0403 13:10:07.560297 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:07.560588 10406 caffe.cpp:275] Batch 74, accuracy = 0.99
+I0403 13:10:07.560628 10406 caffe.cpp:275] Batch 74, loss = 0.0447841
+I0403 13:10:07.745668 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :75
+I0403 13:10:07.745937 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:07.746209 10406 caffe.cpp:275] Batch 75, accuracy = 1
+I0403 13:10:07.746243 10406 caffe.cpp:275] Batch 75, loss = 0.0164325
+I0403 13:10:07.929203 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :76
+I0403 13:10:07.929497 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:07.929844 10406 caffe.cpp:275] Batch 76, accuracy = 0.95
+I0403 13:10:07.929880 10406 caffe.cpp:275] Batch 76, loss = 0.147842
+I0403 13:10:08.113883 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :77
+I0403 13:10:08.114166 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:08.114446 10406 caffe.cpp:275] Batch 77, accuracy = 0.98
+I0403 13:10:08.114480 10406 caffe.cpp:275] Batch 77, loss = 0.0919854
+I0403 13:10:08.299399 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :78
+I0403 13:10:08.299681 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:08.299967 10406 caffe.cpp:275] Batch 78, accuracy = 0.95
+I0403 13:10:08.300001 10406 caffe.cpp:275] Batch 78, loss = 0.169424
+I0403 13:10:08.487119 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :79
+I0403 13:10:08.487452 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:08.487736 10406 caffe.cpp:275] Batch 79, accuracy = 0.96
+I0403 13:10:08.487771 10406 caffe.cpp:275] Batch 79, loss = 0.121169
+I0403 13:10:08.672255 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :80
+I0403 13:10:08.672535 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:08.672817 10406 caffe.cpp:275] Batch 80, accuracy = 0.98
+I0403 13:10:08.672853 10406 caffe.cpp:275] Batch 80, loss = 0.046208
+I0403 13:10:08.859522 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :81
+I0403 13:10:08.859815 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:08.860127 10406 caffe.cpp:275] Batch 81, accuracy = 0.97
+I0403 13:10:08.860162 10406 caffe.cpp:275] Batch 81, loss = 0.0552195
+I0403 13:10:09.052014 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :82
+I0403 13:10:09.052315 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:09.052618 10406 caffe.cpp:275] Batch 82, accuracy = 0.98
+I0403 13:10:09.052654 10406 caffe.cpp:275] Batch 82, loss = 0.0714643
+I0403 13:10:09.236449 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :83
+I0403 13:10:09.236732 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:09.236994 10406 caffe.cpp:275] Batch 83, accuracy = 0.96
+I0403 13:10:09.237028 10406 caffe.cpp:275] Batch 83, loss = 0.117512
+I0403 13:10:09.421804 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :84
+I0403 13:10:09.422129 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:09.422418 10406 caffe.cpp:275] Batch 84, accuracy = 0.99
+I0403 13:10:09.422454 10406 caffe.cpp:275] Batch 84, loss = 0.0397772
+I0403 13:10:09.606715 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :85
+I0403 13:10:09.607018 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:09.607290 10406 caffe.cpp:275] Batch 85, accuracy = 0.96
+I0403 13:10:09.607324 10406 caffe.cpp:275] Batch 85, loss = 0.0904854
+I0403 13:10:09.790482 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :86
+I0403 13:10:09.790766 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:09.791100 10406 caffe.cpp:275] Batch 86, accuracy = 0.99
+I0403 13:10:09.791134 10406 caffe.cpp:275] Batch 86, loss = 0.0158838
+I0403 13:10:09.973621 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :87
+I0403 13:10:09.973911 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:09.974198 10406 caffe.cpp:275] Batch 87, accuracy = 0.99
+I0403 13:10:09.974231 10406 caffe.cpp:275] Batch 87, loss = 0.0192568
+I0403 13:10:10.154726 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :88
+I0403 13:10:10.155020 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:10.155295 10406 caffe.cpp:275] Batch 88, accuracy = 0.98
+I0403 13:10:10.155329 10406 caffe.cpp:275] Batch 88, loss = 0.074313
+I0403 13:10:10.337313 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :89
+I0403 13:10:10.337604 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:10.337877 10406 caffe.cpp:275] Batch 89, accuracy = 0.97
+I0403 13:10:10.337911 10406 caffe.cpp:275] Batch 89, loss = 0.104373
+I0403 13:10:10.521890 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :90
+I0403 13:10:10.522179 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:10.522466 10406 caffe.cpp:275] Batch 90, accuracy = 0.97
+I0403 13:10:10.522501 10406 caffe.cpp:275] Batch 90, loss = 0.102942
+I0403 13:10:10.706419 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :91
+I0403 13:10:10.706713 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:10.707031 10406 caffe.cpp:275] Batch 91, accuracy = 0.96
+I0403 13:10:10.707064 10406 caffe.cpp:275] Batch 91, loss = 0.108586
+I0403 13:10:10.887430 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :92
+I0403 13:10:10.887732 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:10.888006 10406 caffe.cpp:275] Batch 92, accuracy = 0.97
+I0403 13:10:10.888041 10406 caffe.cpp:275] Batch 92, loss = 0.121228
+I0403 13:10:11.070602 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :93
+I0403 13:10:11.070897 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:11.071209 10406 caffe.cpp:275] Batch 93, accuracy = 0.99
+I0403 13:10:11.071245 10406 caffe.cpp:275] Batch 93, loss = 0.0247932
+I0403 13:10:11.252979 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :94
+I0403 13:10:11.253249 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:11.253528 10406 caffe.cpp:275] Batch 94, accuracy = 0.96
+I0403 13:10:11.253576 10406 caffe.cpp:275] Batch 94, loss = 0.094104
+I0403 13:10:11.438411 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :95
+I0403 13:10:11.438706 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:11.438990 10406 caffe.cpp:275] Batch 95, accuracy = 0.96
+I0403 13:10:11.439023 10406 caffe.cpp:275] Batch 95, loss = 0.104466
+I0403 13:10:11.620918 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :96
+I0403 13:10:11.621215 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:11.621487 10406 caffe.cpp:275] Batch 96, accuracy = 1
+I0403 13:10:11.621522 10406 caffe.cpp:275] Batch 96, loss = 0.00977184
+I0403 13:10:11.806440 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :97
+I0403 13:10:11.806730 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:11.807008 10406 caffe.cpp:275] Batch 97, accuracy = 1
+I0403 13:10:11.807041 10406 caffe.cpp:275] Batch 97, loss = 0.00927477
+I0403 13:10:11.986529 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :98
+I0403 13:10:11.986819 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:11.987093 10406 caffe.cpp:275] Batch 98, accuracy = 0.97
+I0403 13:10:11.987126 10406 caffe.cpp:275] Batch 98, loss = 0.0949928
+I0403 13:10:12.167721 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :99
+I0403 13:10:12.168020 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:12.168330 10406 caffe.cpp:275] Batch 99, accuracy = 0.96
+I0403 13:10:12.168365 10406 caffe.cpp:275] Batch 99, loss = 0.136251
+I0403 13:10:12.349607 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :100
+I0403 13:10:12.349890 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:12.350154 10406 caffe.cpp:275] Batch 100, accuracy = 0.99
+I0403 13:10:12.350188 10406 caffe.cpp:275] Batch 100, loss = 0.0325043
+I0403 13:10:12.532801 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :101
+I0403 13:10:12.533083 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:12.533344 10406 caffe.cpp:275] Batch 101, accuracy = 1
+I0403 13:10:12.533380 10406 caffe.cpp:275] Batch 101, loss = 0.00607185
+I0403 13:10:12.717010 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :102
+I0403 13:10:12.717288 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:12.717563 10406 caffe.cpp:275] Batch 102, accuracy = 0.98
+I0403 13:10:12.717602 10406 caffe.cpp:275] Batch 102, loss = 0.0626298
+I0403 13:10:12.908675 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :103
+I0403 13:10:12.908969 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:12.909235 10406 caffe.cpp:275] Batch 103, accuracy = 0.96
+I0403 13:10:12.909271 10406 caffe.cpp:275] Batch 103, loss = 0.073513
+I0403 13:10:13.102255 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :104
+I0403 13:10:13.102537 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:13.102835 10406 caffe.cpp:275] Batch 104, accuracy = 0.97
+I0403 13:10:13.102870 10406 caffe.cpp:275] Batch 104, loss = 0.102256
+I0403 13:10:13.285616 10406 hdf5_output_layer.cpp:32] Saving HDF5 file hdf5_dumps/iter_874.h5 Iteration :105
+I0403 13:10:13.285914 10406 hdf5_output_layer.cpp:44] Successfully saved 100 rows
+I0403 13:10:13.286203 10406 caffe.cpp:275] Batch 105, accuracy = 0.97
+I0403 13:10:13.286238 10406 caffe.cpp:275] Batch 105, loss = 0.151054
+I0403 13:10:13.286257 10406 caffe.cpp:280] Loss: 0.0807751
+I0403 13:10:13.286299 10406 caffe.cpp:292] accuracy = 0.973396
+I0403 13:10:13.286334 10406 caffe.cpp:292] loss = 0.0807751 (* 1 = 0.0807751 loss)
